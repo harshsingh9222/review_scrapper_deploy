@@ -24,15 +24,15 @@ def index():
             flipkartPage = uClient.read()
             uClient.close()
             flipkart_html = bs(flipkartPage, "html.parser")
-            bigboxes = flipkart_html.findAll("div", {"class": "_1AtVbE col-12-12"})
-            del bigboxes[0:3]
+            bigboxes = flipkart_html.findAll("div", {"class": "cPHDOP col-12-12"})
+            del bigboxes[0:2]
             box = bigboxes[0]
             productLink = "https://www.flipkart.com" + box.div.div.div.a['href']
             prodRes = requests.get(productLink)
             prodRes.encoding='utf-8'
             prod_html = bs(prodRes.text, "html.parser")
             print(prod_html)
-            commentboxes = prod_html.find_all('div', {'class': "_16PBlm"})
+            commentboxes = prod_html.find_all('div', {'class': "RcXBOT"})
 
             filename = searchString + ".csv"
             fw = open(filename, "w")
@@ -71,9 +71,12 @@ def index():
                 mydict = {"Product": searchString, "Name": name, "Rating": rating, "CommentHead": commentHead,
                           "Comment": custComment}
                 reviews.append(mydict)
-            client = pymongo.MongoClient("mongodb+srv://pwskills:pwskills@cluster0.ln0bt5m.mongodb.net/?retryWrites=true&w=majority")
+            uri = "mongodb+srv://harshsingh9222:ranjana526@cluster0.lruqqfb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
+            # Create a new client and connect to the server
+            client =pymongo.MongoClient(uri)
             db = client['review_scrap']
-            review_col = db['review_scrap_data']
+            review_col = db['review_scrap_data_2']
             review_col.insert_many(reviews)
             return render_template('results.html', reviews=reviews[0:(len(reviews)-1)])
         except Exception as e:
